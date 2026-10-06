@@ -4,7 +4,7 @@ The iPhone and Android apps wrap the same web app (`index.html`, `app.js`, …) 
 
 ## Android (Google Play)
 
-**Try it on your phone now.** Open the latest **Android app** run under the repo's **Actions** tab and download the `bin-finder-android-test-apk` file. On the phone, open the file and allow "install unknown apps" when asked. This test version is separate from the Play Store one.
+**Try it on your phone now.** On an Android phone, open https://github.com/Superduty335/AllTotes/releases/latest/download/bin-finder.apk, then open the downloaded file and allow installing apps from your browser when asked. Every push to main updates that link. This test version is separate from the Play Store one.
 
 **Publish on Google Play:**
 
