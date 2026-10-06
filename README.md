@@ -26,6 +26,10 @@ Use the app's own **Scan a label** button. On an iPhone, the regular Camera app 
 
 Repository **Settings → Pages → Build and deployment**: set Source to **Deploy from a branch**, choose **main** and **/ (root)**, then click Save. The site goes live a minute or two later.
 
+## iPhone and Android apps
+
+The same app is wrapped as native iPhone and Android apps in `ios/` and `android/` using Capacitor. GitHub Actions builds both on every push, and the Android run produces a test APK you can install. [APP_STORES.md](APP_STORES.md) covers the Play Store and App Store steps.
+
 ## Files
 
 | File | Purpose |
@@ -34,7 +38,10 @@ Repository **Settings → Pages → Build and deployment**: set Source to **Depl
 | `sw.js`, `manifest.webmanifest`, `icons/` | Offline support and home-screen install |
 | `vendor/qrcode.js` | QR code generator by Kazuhiko Arase (MIT) |
 | `vendor/jsQR.js` | QR code reader by Cosmo Wolfe (Apache-2.0) |
+| `vendor/jspdf.umd.min.js` | PDF writer by James Hall and yWorks (MIT), used for label sheets in the native apps |
 | `fonts/` | Barlow Condensed and IBM Plex (SIL Open Font License) |
+| `android/`, `ios/`, `capacitor.config.json`, `assets/` | Native app projects, config, and icon/splash sources |
+| `scripts/build-web.mjs` | Copies the web app into `www/` for the native builds |
 
 There's no build step. To try it locally, run `python3 -m http.server` in this folder and open http://localhost:8000. The camera only works on `localhost` or HTTPS.
 
