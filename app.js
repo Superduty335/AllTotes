@@ -51,7 +51,10 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 const getBin = id => S.bins.find(b => b.id === id);
 const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 const byCode = (a, b) => a.id.localeCompare(b.id, undefined, { numeric: true });
-const appUrl = () => location.href.replace(/#.*$/, "");
+// Inside the iPhone/Android app the page runs from a local origin, so labels always point at the public web address.
+const NATIVE = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+const PUBLIC_URL = "https://superduty335.github.io/AllTotes/";
+const appUrl = () => NATIVE ? PUBLIC_URL : location.href.replace(/#.*$/, "");
 const binUrl = code => appUrl() + "#" + code;
 
 let toastTimer;
@@ -285,11 +288,11 @@ function viewSettings() {
       <p>Open a backup file here. Bins with the same code are replaced by the ones in the file; everything else stays.</p>
       <div class="row"><label class="btn" for="importFile">Open backup file</label></div>
     </div>
-    <div class="panel">
+    ${NATIVE ? "" : `<div class="panel">
       <h2>Put it on your home screen</h2>
       <p><b>iPhone:</b> open this page in Safari, tap Share, then “Add to Home Screen”.<br><b>Android:</b> in Chrome, tap ⋮ then “Install app” or “Add to Home screen”.</p>
       <p class="busy">Once installed it opens full screen, works without signal, and your phone is less likely to clear its data.</p>
-    </div>`;
+    </div>`}`;
 }
 
 function viewLightbox() {
@@ -418,6 +421,7 @@ async function decodePhoto(file) {
 
 // ---------- labels: print + image ----------
 function printLabels(bins) {
+  if (NATIVE) return shareLabelPdf(bins).catch(failed);
   const out = [];
   for (let p = 0; p < bins.length; p += 10) {
     out.push(`<div class="sheet">${bins.slice(p, p + 10).map(b => `<div class="plabel">${qrSvg(binUrl(b.id))}
@@ -433,29 +437,61 @@ function wrapLines(ctx, text, width, maxLines) {
   if (lines.length > maxLines) { lines.length = maxLines; lines[maxLines - 1] = lines[maxLines - 1].replace(/\s*\S*$/, "…"); }
   return lines;
 }
-async function labelPng(b) { // 1200×600 px = 4×2 in at 300 dpi
+async function labelFonts() {
   try { await Promise.all(['600 120px "IBM Plex Mono"', '600 52px "IBM Plex Sans"', '400 38px "IBM Plex Sans"'].map(f => document.fonts.load(f))); } catch {}
-  const c = document.createElement("canvas"); c.width = 1200; c.height = 600;
-  const ctx = c.getContext("2d");
-  ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, 1200, 600);
+}
+function drawLabel(ctx, x, y, b) { // 1200×600 px = 4×2 in at 300 dpi
+  ctx.fillStyle = "#fff"; ctx.fillRect(x, y, 1200, 600);
   const m = qrMatrix(binUrl(b.id));
   if (m) {
     const n = m.length, cell = Math.floor(480 / n), off = (480 - cell * n) / 2;
     ctx.fillStyle = "#000";
-    m.forEach((row, r) => row.forEach((on, col) => { if (on) ctx.fillRect(60 + off + col * cell, 60 + off + r * cell, cell, cell); }));
+    m.forEach((row, r) => row.forEach((on, col) => { if (on) ctx.fillRect(x + 60 + off + col * cell, y + 60 + off + r * cell, cell, cell); }));
   }
   ctx.fillStyle = "#000"; ctx.textBaseline = "top";
-  ctx.font = '600 120px "IBM Plex Mono", monospace'; ctx.fillText(b.id, 600, 70);
+  ctx.font = '600 120px "IBM Plex Mono", monospace'; ctx.fillText(b.id, x + 600, y + 70);
   ctx.font = '600 52px "IBM Plex Sans", sans-serif';
   const lines = wrapLines(ctx, b.name, 540, 3);
-  lines.forEach((l, i) => ctx.fillText(l, 600, 225 + i * 64));
+  lines.forEach((l, i) => ctx.fillText(l, x + 600, y + 225 + i * 64));
   ctx.fillStyle = "#444"; ctx.font = '400 38px "IBM Plex Sans", sans-serif';
-  wrapLines(ctx, b.location, 540, 1).forEach(l => ctx.fillText(l, 600, 240 + lines.length * 64));
+  wrapLines(ctx, b.location, 540, 1).forEach(l => ctx.fillText(l, x + 600, y + 240 + lines.length * 64));
   ctx.fillStyle = "#777"; ctx.font = '500 28px "IBM Plex Sans", sans-serif';
-  ctx.fillText("Scan to see what's inside", 600, 500);
+  ctx.fillText("Scan to see what's inside", x + 600, y + 500);
+}
+async function labelPng(b) {
+  await labelFonts();
+  const c = document.createElement("canvas"); c.width = 1200; c.height = 600;
+  drawLabel(c.getContext("2d"), 0, 0, b);
   return new Promise(r => c.toBlob(r, "image/png"));
 }
+function loadScript(src) {
+  return new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+}
+// The app's web view can't open the print dialog, so build a PDF of label sheets and hand it to the share sheet (which has Print).
+async function shareLabelPdf(bins) {
+  toast("Preparing labels…");
+  if (!window.jspdf) await loadScript("vendor/jspdf.umd.min.js");
+  await labelFonts();
+  const pdf = new window.jspdf.jsPDF({ unit: "in", format: "letter" });
+  for (let p = 0; p < bins.length; p += 10) {
+    const c = document.createElement("canvas"); c.width = 2550; c.height = 3300; // letter at 300 dpi
+    const ctx = c.getContext("2d"); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
+    bins.slice(p, p + 10).forEach((b, i) => drawLabel(ctx, i % 2 ? 1303 : 47, 150 + Math.floor(i / 2) * 600, b)); // Avery 5163 grid
+    if (p) pdf.addPage();
+    pdf.addImage(c.toDataURL("image/jpeg", 0.95), "JPEG", 0, 0, 8.5, 11);
+  }
+  document.getElementById("toast").hidden = true;
+  await saveFile(pdf.output("blob"), bins.length === 1 ? `${bins[0].id}-label.pdf` : "bin-labels.pdf");
+}
 async function saveFile(blob, filename) {
+  if (NATIVE) {
+    const { Filesystem, Share } = window.Capacitor.Plugins;
+    const data = (await blobToDataUrl(blob)).split(",")[1];
+    const { uri } = await Filesystem.writeFile({ path: filename, data, directory: "CACHE" });
+    try { await Share.share({ title: filename, files: [uri] }); }
+    catch (e) { if (!/cancel/i.test(e && e.message || "")) throw e; }
+    return;
+  }
   const file = new File([blob], filename, { type: blob.type });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try { await navigator.share({ files: [file], title: filename }); return; }
@@ -635,6 +671,6 @@ document.addEventListener("submit", e => {
   S.ready = true;
   route();
 })();
-if ("serviceWorker" in navigator) {
+if (!NATIVE && "serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 }
