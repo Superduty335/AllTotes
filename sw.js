@@ -1,5 +1,5 @@
 // Offline support: serve the app from the cache, refresh the cache in the background.
-const CACHE = "bin-finder-v2";
+const CACHE = "alltotes-v3";
 const FILES = [
   "./", "index.html", "styles.css", "app.js", "manifest.webmanifest",
   "vendor/qrcode.js", "vendor/jsQR.js",

@@ -1,8 +1,8 @@
 {
-  "appId": "com.alltotes.binfinder",
-  "appName": "Bin Finder",
+  "appId": "com.alltotes.app",
+  "appName": "AllTotes",
   "webDir": "www",
-  "backgroundColor": "#eef1f4",
+  "backgroundColor": "#1b1f25",
   "android": { "allowMixedContent": false },
   "ios": { "contentInset": "never" }
 }

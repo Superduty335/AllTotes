@@ -1,8 +1,8 @@
 {
-  "name": "bin-finder",
+  "name": "alltotes",
   "version": "1.0.0",
   "private": true,
-  "description": "Bin Finder: label storage totes with QR codes and scan them to see what's inside.",
+  "description": "AllTotes: label storage totes with QR codes and scan them to see what's inside.",
   "scripts": {
     "build": "node scripts/build-web.mjs",
     "sync": "npm run build && npx cap sync",

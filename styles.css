@@ -41,8 +41,8 @@ a { color: inherit; }
 
 .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
   display: flex; align-items: center; gap: 14px; padding-block: 14px 10px; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
-.brand { font: 700 26px/1 var(--display); letter-spacing: .02em; text-transform: uppercase; margin: 0; flex: 1; text-decoration: none; }
-.brand span { background: var(--tape); color: var(--tape-ink); padding: 0 6px; margin-right: 4px; }
+.brand { font: 700 28px/1 var(--display); letter-spacing: .01em; margin: 0; flex: 1; text-decoration: none; }
+.brand span { background: var(--tape); color: var(--tape-ink); padding: 0 4px 0 2px; margin-left: 1px; }
 .link { background: none; border: 0; padding: 6px 2px; color: var(--muted); font-weight: 500; cursor: pointer; text-decoration: none; }
 .link:hover { color: var(--ink); }
 
