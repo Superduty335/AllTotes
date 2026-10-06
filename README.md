@@ -1,4 +1,4 @@
-# AllTotes: Bin Finder
+# AllTotes
 
 A phone app for keeping track of what's in your storage totes. Each tote gets a QR label. Scan the label to see photos of what's inside and a list of the items.
 

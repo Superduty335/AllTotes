@@ -66,7 +66,7 @@ function toast(msg) {
 function failed(e) {
   console.error(e);
   toast(e && e.name === "QuotaExceededError"
-    ? "Your phone is out of space for Bin Finder. Delete some photos or bins."
+    ? "Your phone is out of space for AllTotes. Delete some photos or bins."
     : "Couldn't save that change. Try again.");
 }
 
@@ -357,7 +357,7 @@ const scanMsg = t => { const m = document.getElementById("scanMsg"); if (m) m.te
 function handleScanned(text) {
   const code = extractCode(text);
   if (code && getBin(code)) { if (navigator.vibrate) navigator.vibrate(60); location.hash = code; return true; }
-  scanMsg(code ? `No bin ${code} on this phone yet.` : "That QR code isn't a Bin Finder label.");
+  scanMsg(code ? `No bin ${code} on this phone yet.` : "That QR code isn't an AllTotes label.");
   return false;
 }
 async function startScanner() {
@@ -505,6 +505,7 @@ async function saveFile(blob, filename) {
 
 // ---------- backup ----------
 const blobToDataUrl = blob => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(r.error); r.readAsDataURL(blob); });
+// The "bin-finder" format key is from the app's earlier name; keeping it lets older backups restore.
 async function exportBackup() {
   toast("Preparing backup…");
   const photos = await DB.all("photos");
@@ -515,12 +516,12 @@ async function exportBackup() {
   parts.push("]}");
   const d = new Date(), stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   document.getElementById("toast").hidden = true;
-  await saveFile(new Blob(parts, { type: "application/json" }), `bin-finder-backup-${stamp}.json`);
+  await saveFile(new Blob(parts, { type: "application/json" }), `alltotes-backup-${stamp}.json`);
 }
 async function importBackup(file) {
   let data;
-  try { data = JSON.parse(await file.text()); } catch { return toast("That file isn't a Bin Finder backup."); }
-  if (!data || data.app !== "bin-finder" || !Array.isArray(data.bins)) return toast("That file isn't a Bin Finder backup.");
+  try { data = JSON.parse(await file.text()); } catch { return toast("That file isn't an AllTotes backup."); }
+  if (!data || data.app !== "bin-finder" || !Array.isArray(data.bins)) return toast("That file isn't an AllTotes backup.");
   const clash = data.bins.filter(b => getBin(b.id)).length;
   if (!confirm(`Restore ${data.bins.length} bin${data.bins.length === 1 ? "" : "s"} and ${(data.photos || []).length} photos?` + (clash ? `\n\n${clash} bin${clash === 1 ? "" : "s"} with the same code on this phone will be replaced.` : ""))) return;
   toast("Restoring…");
@@ -665,7 +666,7 @@ document.addEventListener("submit", e => {
     S.bins = await DB.all("bins");
   } catch (e) {
     console.error(e);
-    $app.innerHTML = `<div class="empty"><h2>Storage is off</h2><p>Bin Finder needs to save data on this phone. Private browsing can block that; open it in a normal browser tab.</p></div>`;
+    $app.innerHTML = `<div class="empty"><h2>Storage is off</h2><p>AllTotes needs to save data on this phone. Private browsing can block that; open it in a normal browser tab.</p></div>`;
     return;
   }
   S.ready = true;

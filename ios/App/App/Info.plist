@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>Bin Finder</string>
+        <string>AllTotes</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -67,10 +67,10 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Bin Finder uses the camera to scan bin labels and take photos of what's inside.</string>
+	<string>AllTotes uses the camera to scan bin labels and take photos of what's inside.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Bin Finder lets you pick photos of what's inside a bin.</string>
+	<string>AllTotes lets you pick photos of what's inside a bin.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Bin Finder can save label images to your photos.</string>
+	<string>AllTotes can save label images to your photos.</string>
 </dict>
 </plist>

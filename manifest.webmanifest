@@ -1,6 +1,6 @@
 {
-  "name": "Bin Finder",
-  "short_name": "Bin Finder",
+  "name": "AllTotes",
+  "short_name": "AllTotes",
   "description": "Label your storage bins with QR codes, then scan one to see what's inside.",
   "start_url": "./",
   "scope": "./",

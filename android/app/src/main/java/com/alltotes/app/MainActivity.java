@@ -1,4 +1,4 @@
-package com.alltotes.binfinder;
+package com.alltotes.app;
 
 import com.getcapacitor.BridgeActivity;
 
