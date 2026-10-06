@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bin Finder</title>
+<meta name="description" content="Label your storage bins with QR codes, then scan one to see the photos and item list of what's inside.">
+<meta name="theme-color" content="#ffd21f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Bin Finder">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#"><span>Bin</span>Finder</a>
+    <a class="link" href="#labels" id="navLabels">Print labels</a>
+    <a class="link" href="#settings" id="navSettings" aria-label="Settings and backup">Backup</a>
+  </header>
+  <main id="app"><p class="busy">Loading your bins…</p></main>
+</div>
+<div id="print" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<input class="hidden-input" type="file" accept="image/*" capture="environment" id="scanPhoto" aria-label="Take a photo of a bin label">
+<input class="hidden-input" type="file" accept="application/json,.json" id="importFile" aria-label="Choose a backup file">
+<script src="vendor/qrcode.js"></script>
+<script src="vendor/jsQR.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
