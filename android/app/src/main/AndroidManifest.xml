@@ -18,6 +18,21 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- "Open in the AllTotes app" button on the label web page: alltotes://bin/B001 -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="alltotes" />
+            </intent-filter>
+            <!-- Label links themselves. Android only opens these in the app once it's allowed under
+                 Settings > Apps > AllTotes > Open by default, since the site can't host verification. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="superduty335.github.io" android:pathPrefix="/AllTotes" />
+            </intent-filter>
         </activity>
 
         <provider

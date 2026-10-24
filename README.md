@@ -20,7 +20,7 @@ The app is hosted on GitHub Pages at **https://superduty335.github.io/AllTotes/*
 - **iPhone**: open the link in Safari, tap Share, then **Add to Home Screen**.
 - **Android**: open it in Chrome, tap ⋮, then **Install app**.
 
-Use the app's own **Scan a label** button. On an iPhone, the regular Camera app opens links in Safari, and Safari keeps its data separate from the home-screen app, so scanning a label there shows an empty Safari copy.
+Scan with the app's own **Scan a label** button. A phone's regular camera opens the label link in the web browser, which keeps its data separate from the app. That page offers an **Open in AllTotes** button that hands the bin to the installed app. On Android, label links open the app directly once you turn it on under Settings → Apps → AllTotes → Open by default → Add link.
 
 ## Turn on GitHub Pages (one time)
 
