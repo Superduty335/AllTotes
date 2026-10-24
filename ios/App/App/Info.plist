@@ -66,6 +66,17 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.alltotes.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>alltotes</string>
+			</array>
+		</dict>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>AllTotes uses the camera to scan bin labels and take photos of what's inside.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

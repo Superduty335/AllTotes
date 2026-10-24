@@ -196,7 +196,7 @@ function viewHome() {
 function viewBin() {
   const b = getBin(S.binId);
   const back = `<a class="link" href="#">‹ All bins</a>`;
-  if (!b) return back + `<div class="empty"><h2>No bin ${esc(S.binId)}</h2><p>This phone doesn't have a bin with that code. If you made it on another phone, move it over with Backup.</p></div>`;
+  if (!b) return back + (NATIVE ? "" : openInApp(S.binId)) + `<div class="empty"><h2>No bin ${esc(S.binId)}</h2><p>${NATIVE ? "This phone doesn't have a bin with that code." : "This browser doesn't have a bin with that code."} If you made it on another phone, move it over with Backup.</p></div>`;
   const items = b.items || [], photos = b.photos || [];
   let h = `${back}
     <div class="head">
@@ -240,6 +240,20 @@ function viewBin() {
         <button class="btn solid-danger" data-act="delBinYes">Delete bin</button><button class="btn" data-act="delBinNo">Keep it</button></div>`
     : `<button class="btn danger" data-act="delBin">Delete this bin</button>`;
   return h;
+}
+
+// A phone's camera opens label links in the browser, which keeps its own storage apart from the
+// installed app. Offer to hand the bin over to the app, where the user's bins actually live.
+function openInApp(code) {
+  const href = /Android/i.test(navigator.userAgent)
+    ? `intent://bin/${code}#Intent;scheme=alltotes;package=com.alltotes.app;end`
+    : `alltotes://bin/${code}`;
+  return `<div class="panel">
+      <h2>Your bins are in the AllTotes app</h2>
+      <p>Your phone's camera opened this label in the web browser, which can't see what you saved in the app.</p>
+      <div class="row"><a class="btn tape" href="${href}">Open ${esc(code)} in AllTotes</a></div>
+      <p class="busy">Next time, scan with the <b>Scan a label</b> button inside AllTotes and the bin opens right away.</p>
+    </div>`;
 }
 
 function labelCard(b) {
@@ -671,6 +685,13 @@ document.addEventListener("submit", e => {
   }
   S.ready = true;
   route();
+  if (NATIVE && window.Capacitor.Plugins.App) {
+    // Label links and alltotes://bin/B001 open the app; jump to that bin.
+    const { App } = window.Capacitor.Plugins;
+    const openUrl = url => { const code = extractCode(url); if (code) location.hash = code; };
+    App.addListener("appUrlOpen", e => openUrl(e.url));
+    App.getLaunchUrl().then(r => r && r.url && openUrl(r.url)).catch(() => {});
+  }
 })();
 if (!NATIVE && "serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
